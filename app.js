@@ -7,7 +7,6 @@ angular.module('aquentChallenge', [])
         $scope.search = '';
         $scope.members = [];
         $scope.selectedMember = null;
-        $scope.selectedRow = null;
         $scope.loadingMembers = true;
 
         //load list of members from API
