@@ -6,15 +6,17 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>UX Society Members</title>
-    <!-- BOOTSTRAP CDN -->
-    <!-- Latest compiled and minified CSS -->
+
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+
     <style>
-        body { padding-top:50px; },
+        body {
+            padding-top: 50px;
+        }
+
     </style>
 
-    <!-- Latest compiled and minified JavaScript -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.23/angular.min.js"></script>
@@ -24,55 +26,76 @@
 <body>
     <div class="container" ng-app="aquentChallenge" ng-controller="appController">
         <h1>UX Society Members</h1>
-        
-        <form>
+
+        <div ng-show="loadingMembers"><i class="fa fa-spinner fa-spin fa-lg"></i> Loading Membership Data</div>
+
+        <form ng-hide="loadingMembers">
             <div class="form-group">
                 <div class="input-group">
                     <div class="input-group-addon"><i class="glyphicon glyphicon-search"></i></div>
 
                     <input type="text" class="form-control" placeholder="Search Members" ng-model="search">
 
-                </div>      
+                </div>
             </div>
         </form>
-        
-        <div ng-show="loadingMembers"><i  class="fa fa-spinner fa-spin fa-lg"></i> Loading Membership Data</div>
-        
-        <div class="memberTable" style="height: 500px; overflow: scroll" ng-hide="loadingMembers">
-            <table class="table table-bordered table-striped table-hover">
-                <thead>
-                    <tr>
-                        <td ng-click="sort = 'firstName'; sortReverse = !sortReverse">
-                            Name
-                            <span ng-show="sort == 'firstName' && !sortReverse" class="glyphicon glyphicon-triangle-bottom"></span>
-                            <span ng-show="sort == 'firstName' && sortReverse" class="glyphicon glyphicon-triangle-top"></span>
-                            <span ng-show="sort !== 'firstName'" class="glyphicon glyphicon-sort"></span>
-                        </td>
-                        <td ng-click="sort = 'occupation'; sortReverse = !sortReverse">
-                            Occupation
-                            <span ng-show="sort == 'occupation' && !sortReverse" class="glyphicon glyphicon-triangle-bottom"></span>
-                            <span ng-show="sort == 'occupation' && sortReverse" class="glyphicon glyphicon-triangle-top"></span>
-                            <span ng-show="sort !== 'occupation'" class="glyphicon glyphicon-sort"></span>
-                        </td>
-                        <td ng-click="sort = 'company'; sortReverse = !sortReverse">
-                            Company
-                            <span ng-show="sort == 'company' && !sortReverse" class="glyphicon glyphicon-triangle-bottom"></span>
-                            <span ng-show="sort == 'company' && sortReverse" class="glyphicon glyphicon-triangle-top"></span>                        
-                            <span ng-show="sort !== 'company'" class="glyphicon glyphicon-sort"></span>                        
-                        </td>
-                    </tr>
-                </thead>
 
-                <tbody>
-                    <tr ng-repeat="member in members | orderBy:sort:sortReverse | filter:search">
-                        <td>{{member.firstName}} {{member.surname}}</td>
-                        <td>{{member.occupation}}</td>
-                        <td>{{member.company}}</td>
-                    </tr>
-                </tbody>
-            </table>
+
+        <div class="col-md-8">
+            <div class="memberTable" style="height: 350px; overflow-y: scroll" ng-hide="loadingMembers">
+                <table class="table table-bordered table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <td ng-click="sort = 'firstName'; sortReverse = !sortReverse">
+                                Name
+                                <span ng-show="sort == 'firstName' && !sortReverse" class="glyphicon glyphicon-triangle-bottom"></span>
+                                <span ng-show="sort == 'firstName' && sortReverse" class="glyphicon glyphicon-triangle-top"></span>
+                                <span ng-show="sort !== 'firstName'" class="glyphicon glyphicon-sort"></span>
+                            </td>
+                            <td ng-click="sort = 'occupation'; sortReverse = !sortReverse">
+                                Occupation
+                                <span ng-show="sort == 'occupation' && !sortReverse" class="glyphicon glyphicon-triangle-bottom"></span>
+                                <span ng-show="sort == 'occupation' && sortReverse" class="glyphicon glyphicon-triangle-top"></span>
+                                <span ng-show="sort !== 'occupation'" class="glyphicon glyphicon-sort"></span>
+                            </td>
+                            <td ng-click="sort = 'company'; sortReverse = !sortReverse">
+                                Company
+                                <span ng-show="sort == 'company' && !sortReverse" class="glyphicon glyphicon-triangle-bottom"></span>
+                                <span ng-show="sort == 'company' && sortReverse" class="glyphicon glyphicon-triangle-top"></span>
+                                <span ng-show="sort !== 'company'" class="glyphicon glyphicon-sort"></span>
+                            </td>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr ng-repeat="member in members | orderBy:sort:sortReverse | filter:search" ng-click="selectMember(member)">
+                            <td>{{member.firstName}} {{member.surname}}</td>
+                            <td>{{member.occupation}}</td>
+                            <td>{{member.company}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
+        <div class="col-md-4">
+            <div class="panel panel-default" ng-hide="loadingMembers">
+                <div class="panel-heading" ng-hide="!selectedMember">
+                    <h3>{{selectedMember.firstName}} {{selectedMember.surname}}</h3>
+                </div>
+                <div class="panel-heading" ng-show="!selectedMember">
+                    <h4>select member for more information</h4>
+                </div>
+                <div class="panel-body" ng-hide="!selectedMember">
+                    <img style="max-height: 150px; max-width: 150px" ng-src="{{selectedMember.portrait}}">
+                    <p><b>Occupation: </b>{{selectedMember.occupation}}</p>
+                    <p><b>Company: </b>{{selectedMember.company}}</p>
+                    <p><b>Motto: </b><i>{{selectedMember.motto}}</i></p>
+                </div>
+            </div>
+        </div>
+
     </div>
 
 </body>
+
 </html>

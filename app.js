@@ -6,6 +6,8 @@ angular.module('aquentChallenge', [])
         $scope.sortReverse = false;
         $scope.search = '';
         $scope.members = [];
+        $scope.selectedMember = null;
+        $scope.selectedRow = null;
         $scope.loadingMembers = true;
 
         //load list of members from API
@@ -18,4 +20,8 @@ angular.module('aquentChallenge', [])
             console.log(status);
             console.log("Error occured");
         });
+    
+        $scope.selectMember = function(member) {
+            $scope.selectedMember = member;
+        };
     });
